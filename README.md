@@ -11,6 +11,8 @@ width of wide characters and emoji.
 > inline renderer, `clear_lines`, and `select` / `confirm` / `checkbox` prompts
 > are working. `text`, spinners, and full-screen layout are next.
 
+**Documentation:** <https://teemutallskog.github.io/pycli/>
+
 ## Quick start
 
 ```bash
