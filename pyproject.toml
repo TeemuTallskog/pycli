@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pycli"
+version = "0.1.0"
+description = "Pure-Python building blocks for interactive command-line tools"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "pycli contributors" }]
+dependencies = ["wcwidth>=0.2.13"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Terminals",
+]
+
+[project.urls]
+Homepage = "https://github.com/TeemuTallskog/pycli"
+Repository = "https://github.com/TeemuTallskog/pycli"
+Issues = "https://github.com/TeemuTallskog/pycli/issues"
+
+[project.optional-dependencies]
+dev = [
+    "hypothesis>=6",
+    "mypy>=1.11",
+    "pyte>=0.8",
+    "pytest>=8",
+    "pytest-timeout>=2",
+    "ruff>=0.6",
+]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.27",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pycli"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+timeout = 30
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["pycli"]
+
+[[tool.mypy.overrides]]
+# msvcrt's stubs are empty on non-Windows platforms.
+module = ["pycli.term.windows"]
+disable_error_code = ["attr-defined"]
