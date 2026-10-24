@@ -132,3 +132,30 @@ def test_not_interactive(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("sys.stdout", NonTTY())
     with pytest.raises(NotInteractive):
         select("Pick one", ["a", "b"])
+
+
+def test_select_free_text_option() -> None:
+    code = textwrap.dedent(
+        """
+        from pycli import select
+        from pycli.widgets import FreeText
+        value = select("Pick one", ["dev", FreeText("Other")])
+        print("RESULT:" + value)
+        """
+    )
+    status, output = run_pty(code, b"\x1b[B\r\rcustom\r", marker=b"Pick one")
+    assert status == 0, output.decode("utf-8", "replace")
+    assert b"RESULT:custom" in output, output.decode("utf-8", "replace")
+
+
+def test_textbox_edits_and_submits() -> None:
+    code = textwrap.dedent(
+        """
+        from pycli import textbox
+        value = textbox("Name")
+        print("RESULT:" + value)
+        """
+    )
+    status, output = run_pty(code, b"apiX\x7f\r", marker=b"Name")
+    assert status == 0, output.decode("utf-8", "replace")
+    assert b"RESULT:api" in output, output.decode("utf-8", "replace")

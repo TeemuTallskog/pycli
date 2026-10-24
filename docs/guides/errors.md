@@ -71,6 +71,7 @@ except NotInteractive:
 | Prompt gets an empty option sequence | `ValueError` |
 | `select(default=...)` is not one of the option values | `ValueError` |
 | `select` / `checkbox` gets an unrecognized option item | `TypeError` |
+| `checkbox` gets a `FreeText` marker | `TypeError` |
 | `checkbox(min_selected=-1)` | `ValueError` |
 | `checkbox(max_selected=...)` is less than `min_selected` | `ValueError` |
 | `checkbox(min_selected=...)` exceeds the option count | `ValueError` |

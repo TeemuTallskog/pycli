@@ -3,11 +3,13 @@
 Quick start:
 
 ```python
-from pycli import checkbox, confirm, select
+from pycli import checkbox, confirm, select, textbox
 
 env = select("Deploy to?", ["development", "staging", "production"])
 services = checkbox("Services", ["api", "web", "worker"])
 confirm(f"Deploy {services} to {env}?")
+
+name = textbox("Project name", placeholder="my-project")
 ```
 
 Prompts render in place, restore the terminal on every exit path, and return
@@ -22,6 +24,7 @@ from .term.clear import clear_lines
 from .widgets.checkbox import checkbox
 from .widgets.confirm import confirm
 from .widgets.select import select
+from .widgets.textbox import textbox
 
 __version__ = "0.1.0"
 
@@ -33,4 +36,5 @@ __all__ = [
     "clear_lines",
     "confirm",
     "select",
+    "textbox",
 ]

@@ -1,7 +1,8 @@
 # pycli
 
 Pure-Python building blocks for interactive command-line tools: arrow-key menus,
-checkboxes, confirmations, and the terminal primitives underneath them.
+checkboxes, confirmations, free-form text input, and the terminal primitives
+underneath them.
 
 No C extensions, no curses, no required UI framework. The only runtime
 dependency is [`wcwidth`](https://pypi.org/project/wcwidth/) for correct display
@@ -10,8 +11,8 @@ width of wide characters and emoji.
 !!! note "Status"
 
     Early M0. The terminal layer, escape-sequence parser, inline renderer,
-    `clear_lines`, and the `select` / `confirm` / `checkbox` prompts are
-    working. `text` input, spinners, and full-screen layout are not implemented
+    `clear_lines`, and the `select` / `confirm` / `checkbox` / `textbox`
+    prompts are working. Spinners and full-screen layout are not implemented
     yet.
 
 ## Install
@@ -62,7 +63,7 @@ terminal has been restored. When stdin or stdout is not a TTY, prompts raise
 
 | Area | Entry points |
 |---|---|
-| Prompts | [`select`][pycli.select], [`checkbox`][pycli.checkbox], [`confirm`][pycli.confirm] |
+| Prompts | [`select`][pycli.select], [`checkbox`][pycli.checkbox], [`textbox`][pycli.textbox], [`confirm`][pycli.confirm] |
 | Errors | [`PycliError`][pycli.PycliError], [`Cancelled`][pycli.Cancelled], [`NotInteractive`][pycli.NotInteractive] |
 | Output helpers | [`clear_lines`][pycli.clear_lines] |
 | Terminal layer | [`Terminal`][pycli.term.Terminal], [`TerminalProtocol`][pycli.term.TerminalProtocol], [`Size`][pycli.term.Size], [`ReadResult`][pycli.term.ReadResult] |

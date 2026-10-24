@@ -12,7 +12,7 @@ Everything documented here is part of the public surface. The import name
 | [`pycli.term.ansi`][pycli.term.ansi] | ANSI constants and cursor helpers |
 | [`pycli.input`][pycli.input] | `Parser`, `Key`, `KeyType` |
 | [`pycli.render`][pycli.render] | `LiveRegion`, `display_width`, `sanitize`, `truncate` |
-| [`pycli.widgets`][pycli.widgets] | Prompt classes, `Option`, `normalize_options` |
+| [`pycli.widgets`][pycli.widgets] | Prompt classes, `Option`, `FreeText`, `normalize_options` |
 | [`pycli.widgets.base`][pycli.widgets.base.Prompt] | The `Prompt` protocol for custom widgets |
 | [`pycli.style`][pycli.style] | `Theme`, `default_theme` |
 | [`pycli.app`][pycli.app] | `App`, the prompt event loop |
@@ -23,6 +23,7 @@ Everything documented here is part of the public surface. The import name
 |---|---|
 | [`select`][pycli.select] | function |
 | [`checkbox`][pycli.checkbox] | function |
+| [`textbox`][pycli.textbox] | function |
 | [`confirm`][pycli.confirm] | function |
 | [`clear_lines`][pycli.clear_lines] | function |
 | [`PycliError`][pycli.PycliError] | exception |

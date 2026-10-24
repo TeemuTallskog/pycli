@@ -1,15 +1,17 @@
 # pycli
 
 Pure-Python building blocks for interactive command-line tools: arrow-key menus,
-checkboxes, confirmations, and the terminal primitives underneath them.
+checkboxes, confirmations, free-form text input, and the terminal primitives
+underneath them.
 
 No C extensions, no curses, no required UI framework. The only runtime
 dependency is [`wcwidth`](https://pypi.org/project/wcwidth/) for correct display
 width of wide characters and emoji.
 
 > Status: early M0 spike. The core terminal layer, escape-sequence parser,
-> inline renderer, `clear_lines`, and `select` / `confirm` / `checkbox` prompts
-> are working. `text`, spinners, and full-screen layout are next.
+> inline renderer, `clear_lines`, and `select` / `confirm` / `checkbox` /
+> `textbox` prompts are working. Free-text options, spinners, and full-screen
+> layout are next.
 
 **Documentation:** <https://teemutallskog.github.io/pycli/>
 
@@ -29,7 +31,7 @@ python3 -m venv .venv
 ```
 
 ```python
-from pycli import checkbox, confirm, select
+from pycli import checkbox, confirm, select, textbox
 
 env = select("Deploy to?", ["development", "staging", "production"])
 services = checkbox("Services", ["api", "web", "worker"], min_selected=1)
@@ -43,6 +45,17 @@ if confirm(f"Deploy {', '.join(services)} to {env}?"):
 ```python
 region = select("Region", [("eu-west-1", "Europe"), ("us-east-1", "US")])
 ```
+
+It also accepts free-text options, which open an inline editor and return the
+typed string:
+
+```python
+from pycli.widgets import FreeText
+
+env = select("Deploy to?", ["development", "production", FreeText("Other")])
+```
+
+For standalone input, use `textbox("Project name", placeholder="my-project")`.
 
 The user can cancel with `Esc`, which raises `pycli.Cancelled`; `Ctrl-C` raises
 `KeyboardInterrupt` after the terminal has been restored. When stdin is not a
@@ -109,7 +122,7 @@ src/pycli/
   term/      Terminal lifecycle, ANSI primitives, platform backends
   input/     Incremental byte -> key parser
   render/    Inline live region, width-aware truncation
-  widgets/   select, checkbox, confirm
+  widgets/   select, checkbox, textbox, confirm, free-text options
 tests/       Parser fixtures, renderer snapshots, real-PTY integration tests
 ```
 
@@ -117,9 +130,9 @@ tests/       Parser fixtures, renderer snapshots, real-PTY integration tests
 
 | Milestone | Scope |
 |---|---|
-| M0 | Terminal core, parser, inline renderer, `clear_lines`, `select` / `confirm` / `checkbox` (current) |
+| M0 | Terminal core, parser, inline renderer, `clear_lines`, `select` / `confirm` / `checkbox` / `textbox`, `FreeText` options (current) |
 | M1 | Line-level diff rendering, resize robustness, full-screen alt-buffer helpers |
-| M2 | `text` input with validation and secret mode |
+| M2 | Text validation and secret mode |
 | M3 | `spinner` / `progress`, theme and color downgrade |
 | M4 | Windows backend hardening, mouse, bracketed-paste edge cases |
 | M5 | Docs, examples, CI matrix, PyPI release |

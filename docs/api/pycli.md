@@ -3,7 +3,7 @@
 The top-level package. These names are the intended public API:
 
 ```python
-from pycli import checkbox, confirm, select
+from pycli import checkbox, confirm, select, textbox
 ```
 
 ::: pycli
@@ -12,6 +12,7 @@ from pycli import checkbox, confirm, select
       members:
         - select
         - checkbox
+        - textbox
         - confirm
         - clear_lines
         - PycliError

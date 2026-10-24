@@ -1,7 +1,8 @@
 # pycli.widgets
 
 The prompt implementations behind [`select`][pycli.select],
-[`checkbox`][pycli.checkbox], and [`confirm`][pycli.confirm].
+[`checkbox`][pycli.checkbox], [`textbox`][pycli.textbox], and
+[`confirm`][pycli.confirm].
 
 The convenience functions are documented on the [`pycli`][pycli.select] page.
 This page covers the classes and helpers you need to build or test widgets
@@ -14,9 +15,11 @@ with [`App`][pycli.app.App].
       show_root_heading: false
       members:
         - Option
+        - FreeText
         - normalize_options
         - SelectPrompt
         - CheckboxPrompt
+        - TextboxPrompt
         - ConfirmPrompt
 
 ## Prompt protocol

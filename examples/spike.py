@@ -2,25 +2,26 @@
 
 from __future__ import annotations
 
-from pycli import Cancelled, checkbox, confirm, select
+from pycli import Cancelled, checkbox, confirm, select, textbox
+from pycli.widgets import FreeText
 
 
 def main() -> None:
     try:
         environment = select(
             "Deploy to?",
-            ["development", "staging", "production"],
+            ["development", "staging", "production", FreeText("Other")],
         )
         services = checkbox(
             "Services",
             ["api", "web", "worker"],
             min_selected=1,
         )
-        print("Selected:", services)
-        if confirm(f"Deploy {', '.join(services)} to {environment}?"):
-            print(f"Deploying {', '.join(services)} to {environment}...")
+        version = textbox("Version", placeholder="0.0.0")
+        if confirm(f"Deploy {version} {', '.join(services)} to {environment}?"):
+            print(f"Deploying {version} {', '.join(services)} to {environment}...")
         else:
-            print("Deploy cancelled.")
+            print(f"Deployment {version} {', '.join(services)} to {environment} cancelled.")
     except Cancelled:
         print("Cancelled.")
     except KeyboardInterrupt:

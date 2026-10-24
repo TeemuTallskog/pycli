@@ -1,15 +1,16 @@
 # Prompts
 
-pycli ships three ready-made prompts:
+pycli ships four ready-made prompts:
 
 | Prompt | Returns | Use it for |
 |---|---|---|
-| [`select`][pycli.select] | one option value | choosing from a list |
+| [`select`][pycli.select] | one option value or typed text | choosing from a list |
 | [`checkbox`][pycli.checkbox] | `list` of option values | choosing any number of items |
+| [`textbox`][pycli.textbox] | `str` | free-form single-line input |
 | [`confirm`][pycli.confirm] | `bool` | yes/no decisions |
 
 ```python
-from pycli import checkbox, confirm, select
+from pycli import checkbox, confirm, select, textbox
 
 env = select("Deploy to?", ["development", "staging", "production"])
 services = checkbox("Services", ["api", "web", "worker"], min_selected=1)
@@ -43,6 +44,11 @@ untrusted label cannot move the cursor or corrupt the frame.
 Passing anything else raises `TypeError`; passing an empty sequence raises
 `ValueError`.
 
+[`select`][pycli.select] additionally accepts
+[`FreeText`][pycli.widgets.FreeText] markers, which open an inline text field
+instead of returning a fixed value. `checkbox` rejects them because it has no
+single place to return typed text.
+
 ## `select`
 
 ```python
@@ -58,7 +64,8 @@ env = select(
 - Returns the **value** of the highlighted option.
 - `default=` must compare equal (`==`) to one of the option values, otherwise
   `ValueError` is raised. Because `None` means "no default", an option whose
-  value is actually `None` cannot be preselected this way.
+  value is actually `None` cannot be preselected this way. Free-text markers are
+  not valid `default=` targets; use their own `default=` field instead.
 - The list wraps: moving up from the first option lands on the last.
 - At most 12 options are shown at once, further limited by the terminal height.
   Hidden options are summarized with `↑ N more` / `↓ N more`, and the selection
@@ -75,6 +82,54 @@ env = select(
 | `Enter` | submit |
 | `Esc` | cancel with [`Cancelled`][pycli.Cancelled] |
 | `Ctrl-C` | raise `KeyboardInterrupt` |
+
+### Free-text choices
+
+Add a [`FreeText`][pycli.widgets.FreeText] marker when the list should also
+accept a value that is not known up front:
+
+```python
+from pycli import select
+from pycli.widgets import FreeText
+
+env = select(
+    "Deploy to?",
+    [
+        "development",
+        "staging",
+        FreeText("Other", placeholder="custom environment"),
+    ],
+)
+```
+
+Selecting the marker with Enter opens a single-line editor in place. The typed
+text is returned directly, so this example returns either one of the fixed
+strings or the custom value. Multiple markers can be mixed with ordinary
+options.
+
+`FreeText` accepts these fields:
+
+| Field | Meaning |
+|---|---|
+| `label` | text shown in the list, default `"Other"` |
+| `placeholder` | dimmed hint shown while the field is empty |
+| `default` | initial field contents |
+| `allow_empty` | allow submitting an empty string, default `False` |
+
+While editing:
+
+| Key | Action |
+|---|---|
+| `←` / `→` | move the cursor |
+| `Home` / `End` | jump to the start / end |
+| `Backspace` / `Delete` | delete before / at the cursor |
+| `Enter` | submit the typed text |
+| `Esc` | leave the editor and return to the list |
+| `Ctrl-C` | raise `KeyboardInterrupt` |
+
+A second `Esc`, after leaving the editor, cancels the prompt. Empty submissions
+show an inline `Value cannot be empty` error unless `allow_empty=True` is set.
+Existing text is discarded when the editor is closed with `Esc`.
 
 ## `checkbox`
 
@@ -115,6 +170,38 @@ services = checkbox(
 Unlike `select`, the checkbox prompt has no `Page Up` / `Page Down` / `g` / `G`
 bindings.
 
+## `textbox`
+
+```python
+from pycli import textbox
+
+name = textbox(
+    "Project name",
+    placeholder="my-project",
+    default="",
+)
+```
+
+- Returns the typed `str`.
+- `default=` pre-fills the field with the cursor at the end.
+- `placeholder=` is shown dimmed while the field is empty.
+- `allow_empty=False` (the default) keeps the prompt open and shows an inline
+  error when Enter is pressed with no text.
+- Long values scroll horizontally, and the caret stays visible on narrow
+  terminals.
+- Bracketed paste is flattened to one line: line breaks become spaces, tabs
+  become four spaces, and escape/control sequences are removed.
+
+| Key | Action |
+|---|---|
+| printable characters | insert at the cursor |
+| `←` / `→` | move the cursor |
+| `Home` / `End` | jump to the start / end |
+| `Backspace` / `Delete` | delete before / at the cursor |
+| `Enter` | submit |
+| `Esc` | cancel with [`Cancelled`][pycli.Cancelled] |
+| `Ctrl-C` | raise `KeyboardInterrupt` |
+
 ## `confirm`
 
 ```python
@@ -131,9 +218,11 @@ if confirm("Overwrite the file?", default=False):
 
 ## Cancellation and interruption
 
-All three prompts behave the same way:
+All four prompts behave the same way:
 
-- `Esc` raises [`Cancelled`][pycli.Cancelled].
+- `Esc` raises [`Cancelled`][pycli.Cancelled]. The exception is a `select`
+  free-text editor, where the first `Esc` returns to the list and the second
+  cancels the prompt.
 - `Ctrl-C` raises `KeyboardInterrupt` (the terminal has already been restored
   by the time you see it).
 - If the input stream closes (`EOF`), the prompt raises `Cancelled("terminal
